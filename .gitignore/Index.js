@@ -1,26 +1,62 @@
+bot.login(process.env.TOKEN); 
 const Discord = require("discord.js");
 const bot = new Discord.Client();
-var prefix = ("Mr")
+var prefix = ("_")
+var bienvenue = ("général")
+//var Staff = (" ")
+
 bot.on('ready', function() {
-    //message.member.addRole('Membres').then(console.log).catch(console.error);
-    bot.user.setGame(`Mrhelp${bot.guilds.size} serveurs et ${bot.users.size} utilisateurs`)
+    bot.user.setGame(`_help| ${bot.guilds.size} familles avec ${bot.users.size} membres`)
     console.log(`Connecté`);
 });
-//command bot!
+bot.on("guildMemberAdd", member =>{
+    member.guild.channels.find("name", bienvenue).send(`Bienvenue à ${member} sur le serveur`)
+});
+bot.on("guildMemberRemove", member =>{
+    member.guild.channels.find("name", bienvenue).send(`Aurevoir à ${member} tu part du serveur`)
+});
+bot.on("guildMemberAdd", member =>{
+    var role = member.guild.roles.find("name", );
+    member.addRole(role);
+});
+//command bot
 bot.on('message', message =>{
 //help command
     if(message.content === prefix + "help"){
-        message.reply("Je vais t'aidé tien la liste des commands:\nMrhelp\n Mrping\n Mrban\n Mrkick");
-        message.channel.sendMessage("Les commands Mrkick, Mrban ne sont autorisé que par les admins")
+        message.channel
+        var embed = new Discord.RichEmbed()
+            .setTitle("_help/(Aide)")
+            .setDescription("liste des commands")
+            .addField("_help", "pour vous aidez", true)
+            .addField("_info", "pour des infos sur vous\net le serveur", true)
+            .addField("_kick", "pour kick", true)
+            .addField("_ban", "pour ban", true)
+            .addField("Le serveur de Xaria", "(https://discord.gg/chuKm)", true)
+            .addField("_kick et _ban son pour le Staff", "Pour le bon fonctionnement du \nBot créer un grade Staff", true)
+            .setColor("0x0080FF")
+            .setFooter("Merci de m'avoir demandé les commants. ;)")
+        message.channel.sendEmbed(embed);
     };
+    if(message.content === prefix + "info"){
+        var embed = new Discord.RichEmbed()
+            .setTitle("_info/(Info)")
+            .setDescription("information pour vous")
+            .addField("Nom de la Famille ", message.guild.name)
+            .addField("Créer le ", message.guild.createdAt)
+            .addField(`Tu es devenue membre de la famille ${member} le `, message.member.joinedAt)
+            .addField("Le serveur de Xaria", "(https://discord.gg/chuKm)", true)
+            .setColor("0x0080FF")
+            .setFooter("Merci de m'avoir demandé les infos. ;)")
+        message.channel.sendEmbed(embed);
+    }
 //kick command
     let command = message.content.split(" ")[0];
     const args = message.content.slice(prefix.length).split(/ +/);
     command = args.shift().toLowerCase();
     if(command === "kick"){
-        let modRole = message.guild.roles.find("name", "Admin")
+        let modRole = message.guild.roles.find("name", "Staff")
         if(!message.member.roles.has(modRole.id)){
-            return MessageEmbed.reply("Désolé mais tu n'est pas admin va sur le #recrutement-staff et tante de deveminir admin.").catch(console.error);
+            return MessageEmbed.reply("Désolé mais tu n'est pas admin.").catch(console.error);
         };
         if(message.mentions.users.size === 0){
             return message.reply("Tu a oublié de mentionner une personne merci de le faire.").catch(console.error);
@@ -38,9 +74,9 @@ bot.on('message', message =>{
     };
 //ban command
     if(command === "ban"){
-        let modRole = message.guild.roles.find("name", "Admin")
+        let modRole = message.guild.roles.find("name", "Staff")
         if(!message.member.roles.has(modRole.id)){
-            return MessageEmbed.reply("Désolé mais tu n'est pas admin va sur le #recrutement-staff et tante de deveminir admin.").catch(console.error);
+            return MessageEmbed.reply("Désolé mais tu n'est pas admin.").catch(console.error);
         };
         const member = message.mentions.members.first();
         if (!member) return message.reply("Tu a oublié de mentionner une personne merci de le faire.");
@@ -48,6 +84,4 @@ bot.on('message', message =>{
            message.reply(`Le membre à bien êtait ban`).catch(console.error);
         });
     }
-});
-
-bot.login(process.env.TOKEN); 
+}); 
